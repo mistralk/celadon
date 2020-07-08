@@ -3,6 +3,7 @@
 #include "core/Camera.hpp"
 #include "core/Image.hpp"
 #include "core/Integrator.hpp"
+#include "samplers/RandomSampler.hpp"
 
 namespace celadon {
     Renderer::Renderer(std::shared_ptr<Image> image) 
@@ -29,15 +30,22 @@ namespace celadon {
         auto integrator = scene->integrator();
         auto [img_width, img_height] = m_image->get_width_height();
 
+        size_t spp = 1;
+        RandomSampler sampler(spp);
+
         for (size_t y = 0; y < img_height; ++y) {
             for (size_t x = 0; x < img_width; ++x) {
-                FLOAT u = (FLOAT)x / (FLOAT)img_width;
-                FLOAT v = (FLOAT)y / (FLOAT)img_height;
+                Color3f Li(0, 0, 0);
 
-                auto ray = camera->generate_ray(Point2f(u, v));
-                auto Li = integrator->Li(scene, ray);
+                for (size_t sample = 0; sample < spp; ++sample) {
+                    FLOAT u = ((FLOAT)x + sampler.get_1d()) / (FLOAT)img_width;
+                    FLOAT v = ((FLOAT)y + sampler.get_1d()) / (FLOAT)img_height;
+
+                    auto ray = camera->generate_ray(Point2f(u, v));
+                    Li += integrator->Li(scene, ray);
+                }
                 
-                m_image->set_pixel(Point2f(x, y), Li);
+                m_image->set_pixel(Point2f(x, y), Li / spp);
             }
         }
 

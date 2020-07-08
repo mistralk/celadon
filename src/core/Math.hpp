@@ -15,6 +15,7 @@ namespace celadon {
     using FLOAT = float;
     const FLOAT K_PI = 3.14159265358979323846;
     const FLOAT K_INV_PI = 1.f / K_PI;
+    const FLOAT K_EPSILON = 1e-5f;
 
     template <typename Type>
     class Point2 {
@@ -343,6 +344,11 @@ namespace celadon {
         auto normalized = dir.normalize();
         FLOAT t = 0.5 * (normalized.y + 1.0);
         return (1.0-t)*Color3f(1, 1, 1) + t*Color3f(0.5, 0.7, 1.0);
+    }
+
+    template <typename Type>
+    Type sign(const Type& value) {
+        return value < 0 ? -1 : 1;
     }
 
 };

@@ -9,8 +9,11 @@ namespace celadon {
 
     }
     
-    Scene::Scene(std::shared_ptr<Camera> camera, std::shared_ptr<Integrator> integrator, std::vector<std::shared_ptr<Shape>> shapes) 
-     : m_camera(camera), m_integrator(integrator), m_shapes(shapes) {
+    Scene::Scene(std::shared_ptr<Camera> camera,
+            std::shared_ptr<Integrator> integrator, 
+            std::vector<std::shared_ptr<Shape>> shapes,
+            std::vector<std::shared_ptr<Light>> lights)
+     : m_camera(camera), m_integrator(integrator), m_shapes(shapes), m_lights(lights) {
 
     }
 
@@ -19,13 +22,33 @@ namespace celadon {
     }
 
     std::optional<SurfaceHit> Scene::intersect(const Ray& ray) const {
+        SurfaceHit hit;
+        hit.distance = 123456789.0;
+        bool is_hit = false;
+
+        for (const auto& shape : m_shapes) {
+            auto temp_hit = shape->intersect(ray);
+            if (temp_hit) {
+                is_hit = true;
+                if (temp_hit->distance <= hit.distance)
+                    hit = temp_hit.value();
+            }
+        }
+
+        if (is_hit)
+            return hit;
+        else
+            return std::nullopt;
+    }
+
+    bool Scene::test_occlusion(const Ray& ray) const {
         for (const auto& shape : m_shapes) {
             auto hit = shape->intersect(ray);
             if (hit)
-                return hit;
+                return true;
         }
-
-        return std::nullopt;
+        
+        return false;
     }
 
 }

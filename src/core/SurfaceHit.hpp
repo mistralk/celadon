@@ -8,6 +8,8 @@ namespace celadon {
         Point3f p;
         Vec3f wo;
         Normal3f n;
+
+        FLOAT distance;
     };
 }
 

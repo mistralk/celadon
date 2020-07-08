@@ -11,7 +11,9 @@
 
 #include "cameras/PinholeCamera.hpp"
 #include "shapes/Sphere.hpp"
-#include "integrators/NormalIntegrator.hpp"
+#include "integrators/Normal.hpp"
+#include "integrators/Whitted.hpp"
+#include "lights/PointLight.hpp"
 
 using namespace celadon;
 
@@ -19,14 +21,20 @@ size_t width = 200, height = 100;
 
 std::shared_ptr<celadon::Scene> make_test_scene() {
     auto camera = std::make_shared<PinholeCamera>(Point3f(0, 1, 0), Point3f(0, 0, 1), Vec3f(0, 1, 0), 90, (FLOAT)width/(FLOAT)height);
-    auto integrator = std::make_shared<NormalIntegrator>();
-    
+    auto integrator = std::make_shared<WhittedIntegrator>();    
     std::vector<std::shared_ptr<Shape>> shapes;
-    shapes.push_back(std::make_shared<Sphere>(Point3f(0, 0, 1), 0.5));
-    shapes.push_back(std::make_shared<Sphere>(Point3f(1.0, 0, 1.6), 0.5));
-    shapes.push_back(std::make_shared<Sphere>(Point3f(0, -100.5, 1), 100));
+    std::vector<std::shared_ptr<Light>> lights;
 
-    return std::make_shared<Scene>(camera, integrator, shapes);
+    shapes.push_back(std::make_shared<Sphere>(Point3f(1.0, 0, 1.6), 0.5));
+    shapes.push_back(std::make_shared<Sphere>(Point3f(0, 0, 1), 0.5));
+    shapes.push_back(std::make_shared<Sphere>(Point3f(-0.5, 0, 0.5), 0.5));
+    shapes.push_back(std::make_shared<Sphere>(Point3f(0, -100.5, 1), 100));
+    
+    shapes.push_back(std::make_shared<Sphere>(Point3f(0, -100.5, 1), 100));
+    
+    lights.push_back(std::make_shared<PointLight>(Color3f(1, 1, 1), Point3f(0, 1.7, 1)));
+
+    return std::make_shared<Scene>(camera, integrator, shapes, lights);
 }
 
 int main() {

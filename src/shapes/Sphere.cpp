@@ -26,6 +26,7 @@ namespace celadon {
             if (0.0 < t0 && t0 < 123456789.0) {
                 hit.p = ray.o + t0 * ray.dir;
                 hit.n = (hit.p - m_origin) / m_radius;
+                hit.distance = (hit.p - ray.o).length();
                 return hit;
             }
 
@@ -33,6 +34,7 @@ namespace celadon {
             if (0.0 < t1 && t1 < 123456789.0) {
                 hit.p = ray.o + t1 * ray.dir;
                 hit.n = (hit.p - m_origin) / m_radius;
+                hit.distance = (hit.p - ray.o).length();
                 return hit;
             }
         }
