@@ -14,23 +14,29 @@
 #include "integrators/Normal.hpp"
 #include "integrators/Whitted.hpp"
 #include "lights/PointLight.hpp"
+#include "bsdfs/Lambertian.hpp"
+#include "samplers/RandomSampler.hpp"
 
 using namespace celadon;
 
-size_t width = 200, height = 100;
+size_t width = 300, height = 150;
 
 std::shared_ptr<celadon::Scene> make_test_scene() {
-    auto camera = std::make_shared<PinholeCamera>(Point3f(0, 1, 0), Point3f(0, 0, 1), Vec3f(0, 1, 0), 90, (FLOAT)width/(FLOAT)height);
-    auto integrator = std::make_shared<WhittedIntegrator>();    
+    auto camera = std::make_shared<PinholeCamera>(Point3f(0, 1, 0), Point3f(0, 0, 1), Vec3f(0, 1, 0), 60, (FLOAT)width/(FLOAT)height);
+    auto sampler = std::make_shared<RandomSampler>(1);
+    auto integrator = std::make_shared<WhittedIntegrator>(sampler);    
     std::vector<std::shared_ptr<Shape>> shapes;
     std::vector<std::shared_ptr<Light>> lights;
 
-    shapes.push_back(std::make_shared<Sphere>(Point3f(1.0, 0, 1.6), 0.5));
-    shapes.push_back(std::make_shared<Sphere>(Point3f(0, 0, 1), 0.5));
-    shapes.push_back(std::make_shared<Sphere>(Point3f(-0.5, 0, 0.5), 0.5));
-    shapes.push_back(std::make_shared<Sphere>(Point3f(0, -100.5, 1), 100));
-    
-    shapes.push_back(std::make_shared<Sphere>(Point3f(0, -100.5, 1), 100));
+    auto lambertian_red= std::make_shared<Lambertian>(Color3f(0.5, 0, 0));
+    auto lambertian_green= std::make_shared<Lambertian>(Color3f(0, 0.5, 0));
+    auto lambertian_blue = std::make_shared<Lambertian>(Color3f(0, 0, 0.5));
+    auto lambertian_white = std::make_shared<Lambertian>(Color3f(0.5, 0.5, 0.5));
+
+    shapes.push_back(std::make_shared<Sphere>(Point3f(-0.5, 0, 0.4), 0.5, lambertian_white));
+    shapes.push_back(std::make_shared<Sphere>(Point3f(0, 0, 1), 0.5, lambertian_red));
+    shapes.push_back(std::make_shared<Sphere>(Point3f(1.0, 0, 1.6), 0.5, lambertian_white));
+    shapes.push_back(std::make_shared<Sphere>(Point3f(0, -100.5, 1), 100, lambertian_white));
     
     lights.push_back(std::make_shared<PointLight>(Color3f(1, 1, 1), Point3f(0, 1.7, 1)));
 
@@ -94,6 +100,10 @@ int main() {
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
+        
+        char title[256];
+        sprintf(title, "%lld samples/pixel", image->get_spp());
+        glfwSetWindowTitle(window, title);
 
         /* Poll for and process events */
         glfwPollEvents();

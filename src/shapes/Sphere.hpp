@@ -4,9 +4,11 @@
 #include "core/Shape.hpp"
 
 namespace celadon {
+    class BSDF;
+    
     class Sphere : public Shape {
     public:
-        Sphere(Point3f origin, FLOAT radius);
+        Sphere(Point3f origin, FLOAT radius, std::shared_ptr<BSDF> bsdf);
         ~Sphere();
         std::optional<SurfaceHit> intersect(const Ray& ray) const final;
     

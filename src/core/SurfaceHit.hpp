@@ -4,10 +4,13 @@
 #include "core/Math.hpp"
 
 namespace celadon {
+    class BSDF;
+    
     struct SurfaceHit {
         Point3f p;
         Vec3f wo;
         Normal3f n;
+        std::shared_ptr<BSDF> bsdf;
 
         FLOAT distance;
     };

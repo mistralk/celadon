@@ -20,7 +20,7 @@ namespace celadon {
     Scene::~Scene() {
 
     }
-
+    
     std::optional<SurfaceHit> Scene::intersect(const Ray& ray) const {
         SurfaceHit hit;
         hit.distance = 123456789.0;

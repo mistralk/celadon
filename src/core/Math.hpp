@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <ctime>
 #include <cstdlib>
+#include <chrono>
 
 namespace celadon {
 
@@ -291,7 +292,9 @@ namespace celadon {
             x ^= x << 25;
             x ^= x >> 27;
             state_ = x;
-            return (FLOAT)((x * 0x2545F4914F6CDD1D) * RAND_MAx);
+            
+            FLOAT num = ((x * 0x2545F4914F6CDD1D) * RAND_MAx);
+            return num;
         }
     };
 

@@ -7,16 +7,19 @@
 
 namespace celadon {
     class Scene;
+    class Sampler;
     struct Ray;
 
     class Integrator {
     public:
-        Integrator() = default;
+        Integrator(std::shared_ptr<Sampler> sampler)
+         : m_sampler(sampler) { }
         virtual ~Integrator() = default;
 
         virtual Color3f Li(std::shared_ptr<Scene> scene, const Ray& ray) = 0;
 
     protected:
+        std::shared_ptr<Sampler> m_sampler;
     };
 }
 

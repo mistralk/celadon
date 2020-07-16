@@ -7,7 +7,7 @@
 
 namespace celadon {
     Renderer::Renderer(std::shared_ptr<Image> image) 
-     : m_image(image) {
+     : m_image(image), m_pixel_sampler(std::make_unique<RandomSampler>(1)) {
 
     }
 
@@ -31,24 +31,25 @@ namespace celadon {
         auto [img_width, img_height] = m_image->get_width_height();
 
         size_t spp = 1;
-        RandomSampler sampler(spp);
 
         for (size_t y = 0; y < img_height; ++y) {
             for (size_t x = 0; x < img_width; ++x) {
                 Color3f Li(0, 0, 0);
 
                 for (size_t sample = 0; sample < spp; ++sample) {
-                    FLOAT u = ((FLOAT)x + sampler.get_1d()) / (FLOAT)img_width;
-                    FLOAT v = ((FLOAT)y + sampler.get_1d()) / (FLOAT)img_height;
+                    FLOAT u = ((FLOAT)x + m_pixel_sampler->get_1d()) / (FLOAT)img_width;
+                    FLOAT v = ((FLOAT)y + m_pixel_sampler->get_1d()) / (FLOAT)img_height;
 
                     auto ray = camera->generate_ray(Point2f(u, v));
                     Li += integrator->Li(scene, ray);
                 }
                 
-                m_image->set_pixel(Point2f(x, y), Li / spp);
+                //m_image->set_pixel(Point2f(x, y), Li / spp);
+                m_image->accumulate_pixel(Point2f(x, y), Li);
             }
         }
 
+        m_image->add_spp_count(spp);
         m_image->set_bitmap();
     }
 }

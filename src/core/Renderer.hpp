@@ -6,6 +6,7 @@
 namespace celadon {
     class Scene;
     class Image;
+    class Sampler;
 
     class Renderer {
     public:
@@ -18,6 +19,7 @@ namespace celadon {
 
     private:
         std::shared_ptr<Image> m_image;
+        std::unique_ptr<Sampler> m_pixel_sampler;
     };
 }
 

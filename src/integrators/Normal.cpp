@@ -4,7 +4,8 @@
 #include "core/Scene.hpp"
 
 namespace celadon {
-    NormalIntegrator::NormalIntegrator() {
+    NormalIntegrator::NormalIntegrator() 
+     : Integrator(nullptr) {
 
     }
 
