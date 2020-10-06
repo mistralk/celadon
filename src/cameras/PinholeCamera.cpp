@@ -7,11 +7,11 @@ namespace celadon {
          FLOAT half_height = tan(theta / 2);
          FLOAT half_width = aspect_ratio * half_height;
 
-         Vec3f w = (m_origin - lookat).normalize();
-         Vec3f u = up.cross(-w).normalize();
-         Vec3f v = w.cross(-u);
+         Vec3f w = (lookat - m_origin).normalize();
+         Vec3f u = up.cross(w).normalize();
+         Vec3f v = w.cross(u);
 
-         m_lower_left_corner = m_origin - half_width*u - half_height*v - w;
+         m_lower_left_corner = m_origin - half_width*u - half_height*v + w;
          m_horizontal = 2 * half_width * u;
          m_vertical = 2 * half_height * v;
     }

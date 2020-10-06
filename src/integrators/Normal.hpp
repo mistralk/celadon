@@ -6,7 +6,7 @@
 namespace celadon {
     class NormalIntegrator final : public Integrator {
     public:
-        NormalIntegrator();
+        NormalIntegrator(std::shared_ptr<Sampler> sampler);
         ~NormalIntegrator();
 
         Color3f Li(std::shared_ptr<Scene> scene, const Ray& ray) override;

@@ -23,23 +23,20 @@ namespace celadon {
         if (scattering_depth < 0)
             return Color3f(0, 0, 0);
 
-        auto hit = scene->intersect(ray);
+        const auto hit = scene->intersect(ray);
 
         if (hit) {
             Color3f Lo(0, 0, 0);
-            // Ambient lighting
-            // Lo += hit->bsdf->reflectance() * 0.05;
 
-            // Direct lighting
+            // Direct lighting            
             for (const auto& light : scene->lights()) {
                 Lo += hit->bsdf->reflectance() * light->sample_Li(scene, *hit); // cosine term is multiplied in light->sample_Li()
             }
 
-            // Indirect lighting
-            
+            // Indirect lighting            
             Color3f indirect_Lo(0, 0, 0);
             auto wi = hit->bsdf->sample_direction(m_sampler, *hit);
-            Ray scattered_ray(hit->p + hit->n * K_EPSILON, wi);
+            Ray scattered_ray(hit->p + K_EPSILON * hit->n, wi);
             indirect_Lo += scatter(scene, scattered_ray, scattering_depth - 1) * hit->bsdf->reflectance();
             Lo += indirect_Lo;
             

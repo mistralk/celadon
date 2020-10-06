@@ -8,8 +8,8 @@ namespace celadon {
     
     struct SurfaceHit {
         Point3f p;
-        Vec3f wo;
         Normal3f n;
+        Vec3f wo;
         std::shared_ptr<BSDF> bsdf;
 
         FLOAT distance;

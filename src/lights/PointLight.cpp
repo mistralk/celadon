@@ -2,6 +2,8 @@
 #include "core/Ray.hpp"
 #include "core/Scene.hpp"
 
+#include <utility>
+
 namespace celadon {
         
     PointLight::PointLight(Color3f intensity, Point3f position)
@@ -14,17 +16,17 @@ namespace celadon {
     }
 
     Color3f PointLight::sample_Li(std::shared_ptr<Scene> scene, const SurfaceHit& hit) {
-        auto wi = (hit.p + hit.n * K_EPSILON) - m_position;
-        auto dist = wi.length();
-        wi = wi.normalize();
+        auto wi_with_length = (hit.p + hit.n * K_EPSILON) - m_position;
+        const auto dist = wi_with_length.length();
+        const auto wi = wi_with_length.normalize();
 
-        Ray shadow_ray(hit.p + hit.n * K_EPSILON, -wi);
-        auto occluded = scene->test_occlusion(shadow_ray);
+        const Ray shadow_ray(hit.p + hit.n * K_EPSILON, -wi);
+        const auto occluded = scene->test_occlusion(shadow_ray);
         if (occluded) {
             return Color3f(0, 0, 0);
         }
         else {
-            auto cos_term = abs(wi.dot(hit.n));
+            const auto cos_term = abs(wi.dot(hit.n));
             return m_intensity / (dist * dist) * cos_term;
         }
     }
