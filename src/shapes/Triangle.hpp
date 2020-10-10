@@ -5,12 +5,15 @@
 
 namespace celadon {
     class BSDF;
+    class Light;
 
     class Triangle final : public Shape {
     public:
-        Triangle(Point3f v0, Point3f v1, Point3f v2, Normal3f normal, std::shared_ptr<BSDF> bsdf);
+        Triangle(Point3f vertices[3], Normal3f normal, std::shared_ptr<BSDF> bsdf = nullptr, std::shared_ptr<Light> emitter = nullptr);
         ~Triangle();
         std::optional<SurfaceHit> intersect(const Ray& ray) const final;
+        Point3f sample_surface(const Point2f& u) const final;
+        FLOAT pdf() const;
 
     private:
         Point3f m_vertices[3];

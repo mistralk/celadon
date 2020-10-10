@@ -21,4 +21,8 @@ namespace celadon {
         
         return (hit.p + hit.n + sphere_p) - hit.p;
     }
+    
+    Color3f Lambertian::reflectance() {
+        return m_reflectance /* * K_INV_PI */;
+    }
 }

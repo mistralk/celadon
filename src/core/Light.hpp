@@ -11,14 +11,14 @@ namespace celadon {
 
     class Light {
     public:
-        Light(Color3f intensity)
-         : m_intensity(intensity) { }
+        Light(Color3f emittance)
+         : m_emittance(emittance) { }
         virtual ~Light() = default;
 
-        virtual Color3f sample_Li(std::shared_ptr<Scene> scene, const SurfaceHit& hit) = 0;
+        virtual Color3f sample(const Point2f& u, std::shared_ptr<Scene> scene, const SurfaceHit& hit) = 0;
 
     protected:
-        Color3f m_intensity;
+        Color3f m_emittance;
 
     };
 }

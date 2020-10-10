@@ -1,6 +1,8 @@
 #ifndef SURFACE_HIT_HPP
 #define SURFACE_HIT_HPP
 
+#include <memory>
+
 #include "core/Math.hpp"
 
 namespace celadon {
@@ -11,6 +13,7 @@ namespace celadon {
         Normal3f n;
         Vec3f wo;
         std::shared_ptr<BSDF> bsdf;
+        Color3f emittance;
 
         FLOAT distance;
     };

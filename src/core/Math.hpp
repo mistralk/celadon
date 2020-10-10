@@ -328,8 +328,15 @@ namespace celadon {
 
     inline static Vec3f sample_hemisphere_cosine(const Point2f& u) {
         Point2f d = sample_disk_uniform(u);
-        FLOAT z = std::sqrt(std::max((FLOAT)0, 1 - d.x * d.x - d.y * d.y));
+        FLOAT z = std::sqrt(std::max((FLOAT)0, 1 - d.x*d.x - d.y*d.y));
         return Vec3f(d.x, d.y, z);
+    }
+    
+    inline static Vec3f sample_sphere_uniform(const Point2f& u) {
+        FLOAT z = 1 - 2*u.x;
+        FLOAT r = std::sqrt(std::max((FLOAT)0, 1 - z*z));
+        FLOAT phi = 2 * K_PI * u.y;
+        return Vec3f(r * std::cos(phi), r * std::sin(phi), z);
     }
 
     static void RGB_clamp(Color3f& color) {

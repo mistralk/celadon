@@ -27,26 +27,29 @@ namespace celadon {
 
         if (hit) {
             Color3f Lo(0, 0, 0);
-
-            // Direct lighting            
-            for (const auto& light : scene->lights()) {
-                Lo += hit->bsdf->reflectance() * light->sample_Li(scene, *hit); // cosine term is multiplied in light->sample_Li()
+            // Intersect with emitter
+            if (hit->bsdf == nullptr) {
+                Lo = hit->emittance;
             }
-
-            // Indirect lighting            
-            Color3f indirect_Lo(0, 0, 0);
-            auto wi = hit->bsdf->sample_direction(m_sampler, *hit);
-            Ray scattered_ray(hit->p + K_EPSILON * hit->n, wi);
-            indirect_Lo += scatter(scene, scattered_ray, scattering_depth - 1) * hit->bsdf->reflectance();
-            Lo += indirect_Lo;
-            
+            else {
+                // Direct lighting
+                for (const auto& light : scene->lights()) {
+                    Lo += hit->bsdf->reflectance() * light->sample(m_sampler->get_2d(), scene, *hit); // cosine term is multiplied in light->sample_Li()
+                }
+                
+                // Indirect lighting            
+                Color3f indirect_Lo(0, 0, 0);
+                auto wi = hit->bsdf->sample_direction(m_sampler, *hit);
+                Ray scattered_ray(hit->p + K_EPSILON * hit->n, wi);
+                indirect_Lo += scatter(scene, scattered_ray, scattering_depth - 1) * hit->bsdf->reflectance();
+                Lo += indirect_Lo;
+            }
             RGB_clamp(Lo);
-
             return Lo;
         }
         else {
             // background radiance
-            return Color3f(1, 1, 1);
+            return Color3f(0, 0, 0);
         }
     }
 }

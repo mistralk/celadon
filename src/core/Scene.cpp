@@ -41,8 +41,10 @@ namespace celadon {
             return std::nullopt;
     }
 
-    bool Scene::test_occlusion(const Ray& ray) const {
+    bool Scene::test_occlusion(const Ray& ray, std::shared_ptr<Shape> me) const {
         for (const auto& shape : m_shapes) {
+            if (shape == me) continue;
+            
             auto hit = shape->intersect(ray);
             if (hit)
                 return true;

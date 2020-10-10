@@ -15,7 +15,7 @@ namespace celadon {
 
         virtual Vec3f sample_direction(std::shared_ptr<Sampler> sampler, const SurfaceHit& hit) = 0;
 
-        Color3f reflectance() {
+        virtual Color3f reflectance() {
             return m_reflectance;
         }
 

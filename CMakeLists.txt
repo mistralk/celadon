@@ -34,6 +34,6 @@ if (MSVC)
     message ("MSVC detected")
 elseif (UNIX)
     message ("Unix environment detected")
-    target_link_libraries (sanso -lpthread -lXi -ldrm -lXdamage -lXxf86vm -lXext 
-    -lX11 -lGL -ldl -lglfw3 -lGLU -lX11 -lXrandr -lXi -lXcursor -lXinerama -lrt -lm)
+    target_link_libraries (celadon -lpthread -lXi -ldrm -lXdamage -lXxf86vm -lXext 
+    -lX11 -lGL -ldl -lglfw -lGLU -lXrandr -lXcursor -lXinerama -lrt -lm)
 endif()

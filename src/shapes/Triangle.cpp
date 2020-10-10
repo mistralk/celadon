@@ -4,8 +4,8 @@
 
 namespace celadon {
 
-    Triangle::Triangle(Point3f v0, Point3f v1, Point3f v2, Normal3f normal, std::shared_ptr<BSDF> bsdf) 
-     : Shape(v0, bsdf), m_vertices{v0, v1, v2}, m_normal(normal) {
+    Triangle::Triangle(Point3f vertices[3], Normal3f normal, std::shared_ptr<BSDF> bsdf, std::shared_ptr<Light> emitter) 
+     : Shape(vertices[0], bsdf, emitter), m_vertices{vertices[0], vertices[1], vertices[2]}, m_normal(normal) {
 
     }
 
@@ -36,10 +36,18 @@ namespace celadon {
 
         //if (u >= 0 && v >= 0) {
         if (t > K_EPSILON) {
-            return SurfaceHit{ray.o + t*D, m_normal, -D.normalize(), m_bsdf, t};
+            return SurfaceHit{ray.o + t*D, m_normal, -D.normalize(), m_bsdf, m_emittance, t};
         }
         else {
             return std::nullopt;
         }
+    }
+
+    Point3f Triangle::sample_surface(const Point2f& u) const {
+        return Point3f(0, 0, 0);
+    }
+
+    FLOAT Triangle::pdf() const {
+        return 0.0;
     }
 }

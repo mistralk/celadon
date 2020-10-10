@@ -6,8 +6,8 @@
 
 namespace celadon {
         
-    PointLight::PointLight(Color3f intensity, Point3f position)
-     : Light(intensity), m_position(position) {
+    PointLight::PointLight(Color3f emittance, Point3f position)
+     : Light(emittance), m_position(position) {
 
      }
 
@@ -15,7 +15,7 @@ namespace celadon {
         
     }
 
-    Color3f PointLight::sample_Li(std::shared_ptr<Scene> scene, const SurfaceHit& hit) {
+    Color3f PointLight::sample(const Point2f& u, std::shared_ptr<Scene> scene, const SurfaceHit& hit) {
         auto wi_with_length = (hit.p + hit.n * K_EPSILON) - m_position;
         const auto dist = wi_with_length.length();
         const auto wi = wi_with_length.normalize();
@@ -27,7 +27,7 @@ namespace celadon {
         }
         else {
             const auto cos_term = abs(wi.dot(hit.n));
-            return m_intensity / (dist * dist) * cos_term;
+            return m_emittance / (dist * dist) * cos_term;
         }
     }
 }

@@ -23,7 +23,7 @@ namespace celadon {
         ~Scene();
 
         std::optional<SurfaceHit> intersect(const Ray& ray) const;
-        bool test_occlusion(const Ray& ray) const;
+        bool test_occlusion(const Ray& ray, std::shared_ptr<Shape> me = nullptr) const;
 
         const std::shared_ptr<Camera> camera() const {
             return m_camera;

@@ -15,6 +15,7 @@
 #include "integrators/Normal.hpp"
 #include "integrators/Whitted.hpp"
 #include "lights/PointLight.hpp"
+#include "lights/AreaLight.hpp"
 #include "bsdfs/Lambertian.hpp"
 #include "bsdfs/Specular.hpp"
 #include "samplers/RandomSampler.hpp"
@@ -35,7 +36,7 @@ std::shared_ptr<celadon::Scene> make_test_scene() {
     auto lambertian_red= std::make_shared<Lambertian>(Color3f(0.5, 0.3, 0.3));
     auto lambertian_green= std::make_shared<Lambertian>(Color3f(0.3, 0.5, 0.3));
     auto lambertian_blue = std::make_shared<Lambertian>(Color3f(0.3, 0.3, 0.5));
-    auto lambertian_white = std::make_shared<Lambertian>(Color3f(0.5, 0.5, 0.5));
+    auto lambertian_white = std::make_shared<Lambertian>(Color3f(0.8, 0.8, 0.8));
     auto mirror = std::make_shared<Specular>(Color3f(1.0, 1.0, 1.0));
 
     shapes.push_back(std::make_shared<Sphere>(Point3f(-0.8, 0, 0.4), 0.5, lambertian_white));
@@ -43,15 +44,29 @@ std::shared_ptr<celadon::Scene> make_test_scene() {
     shapes.push_back(std::make_shared<Sphere>(Point3f(1.0, 0, 1.6), 0.5, lambertian_red));
     shapes.push_back(std::make_shared<Sphere>(Point3f(0.5, 0, -1.6), 0.5, lambertian_green));
     shapes.push_back(std::make_shared<Sphere>(Point3f(0, -100.5, 1), 100, lambertian_white));
-    auto v0 = Point3f(-0.5, 1.3, 0.7);
-    auto v1 = Point3f(-0.8, 0.8, 0.5);
-    auto v2 = Point3f(-0.2, 0.9, 2.5);
-    auto e1 = v1 - v0;
-    auto e2 = v2 - v0;
-    auto n = e2.cross(e1).normalize();
-    shapes.push_back(std::make_shared<Triangle>(v0, v1, v2, n, lambertian_blue));
     
-    lights.push_back(std::make_shared<PointLight>(Color3f(1, 1, 1), Point3f(0, 1.7, 1)));
+    Point3f vertices[3] = {
+        Point3f(-0.5, 1.3, 0.9),
+        Point3f(-0.8, 0.8, 0.7),
+        Point3f(-0.2, 0.9, 2.7)};
+
+    auto e1 = vertices[1] - vertices[0];
+    auto e2 = vertices[2] - vertices[0];
+    auto n = e2.cross(e1).normalize();
+    shapes.push_back(std::make_shared<Triangle>(vertices, n, lambertian_blue));
+    
+    //lights.push_back(std::make_shared<PointLight>(Color3f(1, 1, 1), Point3f(0, 1, 0)));
+    
+    
+    auto light_ball0 = std::make_shared<Sphere>(Point3f(0.0, 1.3, 0.2), 0.4);
+    auto light_ball1 = std::make_shared<Sphere>(Point3f(-1.0, 0.6, 0.4), 0.1);
+    auto light_ball2 = std::make_shared<Sphere>(Point3f(1.0, 0.6, 0.4), 0.1);
+    shapes.push_back(light_ball0);
+    //shapes.push_back(light_ball1);
+    //shapes.push_back(light_ball2);
+    lights.push_back(std::make_shared<AreaLight>(Color3f(1.0, 1.0, 1.0), std::shared_ptr<Sphere>(light_ball0)));
+    //lights.push_back(std::make_shared<AreaLight>(Color3f(1.0, 0.0, 0.0), std::shared_ptr<Sphere>(light_ball1)));
+    //lights.push_back(std::make_shared<AreaLight>(Color3f(0.0, 0.0, 1.0), std::shared_ptr<Sphere>(light_ball2)));
 
     return std::make_shared<Scene>(camera, integrator, shapes, lights);
 }
