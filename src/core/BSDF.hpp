@@ -9,15 +9,17 @@ namespace celadon {
 
     class BSDF {
     public:
-        BSDF(Color3f reflectance)
-         : m_reflectance(reflectance) { }
+        BSDF(Color3f reflectance, bool specular = false)
+         : m_reflectance(reflectance), is_specular(specular) { }
         virtual ~BSDF() = default;
 
-        virtual Vec3f sample_direction(std::shared_ptr<Sampler> sampler, const SurfaceHit& hit) = 0;
+        virtual std::pair<Vec3f, Color3f> sample(std::shared_ptr<Sampler> sampler, const SurfaceHit& hit) = 0;
 
-        virtual Color3f reflectance() {
+        virtual Color3f reflectance(const SurfaceHit& hit) {
             return m_reflectance;
         }
+
+        const bool is_specular;
 
     protected:
         Color3f m_reflectance;

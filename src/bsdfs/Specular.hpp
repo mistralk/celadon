@@ -9,7 +9,7 @@ namespace celadon {
         Specular(Color3f reflectance);
         ~Specular();
         
-        Vec3f sample_direction(std::shared_ptr<Sampler> sampler, const SurfaceHit& hit);
+        std::pair<Vec3f, Color3f> sample(std::shared_ptr<Sampler> sampler, const SurfaceHit& hit);
 
     private:
     };

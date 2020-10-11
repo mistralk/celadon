@@ -25,8 +25,7 @@ namespace celadon {
             return Color3f(0, 0, 0);
         }
 
-        const auto cos_term = abs(wi.dot(hit.n));
-        return L(hit, -wi) * cos_term;
+        return L(hit, -wi) * abs(hit.n.dot(wi));
     }
 
     Color3f AreaLight::L(const SurfaceHit& hit, const Vec3f& wo) {
