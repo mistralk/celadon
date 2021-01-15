@@ -7,13 +7,14 @@
 
 namespace celadon {
     class BSDF;
+    class Light;
     
     struct SurfaceHit {
         Point3f p;
         Normal3f n;
         Vec3f wo;
         std::shared_ptr<BSDF> bsdf;
-        Color3f emittance;
+        std::shared_ptr<Light> light;
 
         FLOAT distance;
     };

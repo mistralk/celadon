@@ -30,26 +30,22 @@ namespace celadon {
         auto integrator = scene->integrator();
         auto [img_width, img_height] = m_image->get_width_height();
 
-        size_t spp = 1;
-
         for (size_t y = 0; y < img_height; ++y) {
             for (size_t x = 0; x < img_width; ++x) {
                 Color3f Li(0, 0, 0);
 
-                for (size_t sample = 0; sample < spp; ++sample) {
-                    FLOAT u = ((FLOAT)x + m_pixel_sampler->get_1d()) / (FLOAT)img_width;
-                    FLOAT v = ((FLOAT)y + m_pixel_sampler->get_1d()) / (FLOAT)img_height;
+                FLOAT u = ((FLOAT)x + m_pixel_sampler->get_1d()) / (FLOAT)img_width;
+                FLOAT v = ((FLOAT)y + m_pixel_sampler->get_1d()) / (FLOAT)img_height;
 
-                    auto ray = camera->generate_ray(Point2f(u, v));
-                    Li += integrator->Li(scene, ray);
-                }
+                auto ray = camera->generate_ray(Point2f(u, v));
+                Li += integrator->Li(scene, ray);
                 
-                //m_image->set_pixel(Point2f(x, y), Li / spp);
+                //Li = Color3f(sqrt(Li.x), sqrt(Li.y), sqrt(Li.z)); // gamma correction
                 m_image->accumulate_pixel(Point2f(x, y), Li);
             }
         }
 
-        m_image->add_spp_count(spp);
+        m_image->add_spp_count(1);
         m_image->set_bitmap();
     }
 }

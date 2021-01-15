@@ -10,8 +10,8 @@ namespace celadon {
         Lambertian(Color3f reflectance);
         ~Lambertian();
         
+        Color3f evaluate(const SurfaceHit& hit, const Vec3f& wo);
         std::pair<Vec3f, Color3f> sample(std::shared_ptr<Sampler> sampler, const SurfaceHit& hit);
-        Color3f reflectance(const SurfaceHit& hit);
 
     private:
     };

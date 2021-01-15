@@ -6,34 +6,27 @@
 #include "core/Scene.hpp"
 
 namespace celadon {
-    AreaLight::AreaLight(Color3f emittance, std::shared_ptr<Shape> shape)
-     : Light(emittance), m_shape(shape) {
-         m_shape->set_emittance(m_emittance);
+    AreaLight::AreaLight(Color3f radiance, std::shared_ptr<Shape> shape)
+     : Light(radiance), m_shape(shape) {
     }
 
     AreaLight::~AreaLight() {
 
     }
 
-    Color3f AreaLight::sample(const Point2f& u, std::shared_ptr<Scene> scene, const SurfaceHit& hit) {
+    std::pair<Vec3f, Color3f> AreaLight::sample(const Point2f& u, std::shared_ptr<Scene> scene, const SurfaceHit& hit) {
         const Point3f& sample_on_shape = m_shape->sample_surface(u);
-        const Vec3f& wi = (hit.p - sample_on_shape).normalize();
+        Vec3f wo = (sample_on_shape - hit.p);
+        const auto dist = (sample_on_shape - hit.p).length();
+        wo = wo.normalize();
 
-        const Ray shadow_ray(hit.p + hit.n * K_EPSILON, -wi);
-        const auto occluded = scene->test_occlusion(shadow_ray, m_shape);
+        const Ray shadow_ray(hit.p + hit.n * K_EPSILON, wo);
+        const auto occluded = scene->test_occlusion(shadow_ray, m_shape, dist);
         if (occluded) {
-            return Color3f(0, 0, 0);
+            return {wo, Color3f(0, 0, 0)};
         }
 
-        return L(hit, -wi) * abs(hit.n.dot(wi));
-    }
-
-    Color3f AreaLight::L(const SurfaceHit& hit, const Vec3f& wo) {
-        return m_emittance;
-        //if (hit.n.dot(wo) > 0.f) {
-        //    return m_emittance;
-        //}
-        //else return Color3f(0, 0, 0);
+        return {wo, m_radiance * abs(hit.n.dot(wo))};
     }
 
     FLOAT AreaLight::pdf() {

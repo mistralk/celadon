@@ -4,8 +4,8 @@
 
 namespace celadon {
 
-    Triangle::Triangle(Point3f vertices[3], Normal3f normal, std::shared_ptr<BSDF> bsdf, std::shared_ptr<Light> emitter) 
-     : Shape(vertices[0], bsdf, emitter), m_vertices{vertices[0], vertices[1], vertices[2]}, m_normal(normal) {
+    Triangle::Triangle(Point3f vertices[3], Normal3f normal, std::shared_ptr<BSDF> bsdf) 
+     : Shape(vertices[0], bsdf), m_vertices{vertices[0], vertices[1], vertices[2]}, m_normal(normal) {
 
     }
 
@@ -26,7 +26,7 @@ namespace celadon {
            return std::nullopt;
 
         const Vec3f tuv = 1.0 / P.dot(E1) * Vec3f(Q.dot(E2), P.dot(T), Q.dot(D));
-        const auto& t = tuv.x; // distance from ray origin to intersection point
+        const auto& t = tuv.x; // from ray origin to intersection point
         const auto& u = tuv.y;
         const auto& v = tuv.z;
         
@@ -36,7 +36,14 @@ namespace celadon {
 
         //if (u >= 0 && v >= 0) {
         if (t > K_EPSILON) {
-            return SurfaceHit{ray.o + t*D, m_normal, -D.normalize(), m_bsdf, m_emittance, t};
+            SurfaceHit hit;
+            hit.p = ray.o + t*D;
+            hit.n = m_normal;
+            hit.wo = -D.normalize();
+            hit.distance = t;
+            hit.bsdf = m_bsdf;
+            hit.light = m_light;
+            return hit;
         }
         else {
             return std::nullopt;

@@ -3,8 +3,8 @@
 #include "core/BSDF.hpp"
 
 namespace celadon {
-    Sphere::Sphere(Point3f origin, FLOAT radius, std::shared_ptr<BSDF> bsdf, std::shared_ptr<Light> emitter)
-     : Shape(origin, bsdf, emitter), m_radius(radius) {
+    Sphere::Sphere(Point3f origin, FLOAT radius, std::shared_ptr<BSDF> bsdf)
+     : Shape(origin, bsdf), m_radius(radius) {
          m_area = 4 * K_PI * m_radius * m_radius;
     }
 
@@ -30,7 +30,7 @@ namespace celadon {
                 hit.wo = -ray.dir.normalize();
                 hit.distance = (hit.p - ray.o).length();
                 hit.bsdf = m_bsdf;
-                hit.emittance = m_emittance;
+                hit.light = m_light;
                 return hit;
             }
 
@@ -41,7 +41,7 @@ namespace celadon {
                 hit.wo = -ray.dir.normalize();
                 hit.distance = (hit.p - ray.o).length();
                 hit.bsdf = m_bsdf;
-                hit.emittance = m_emittance;
+                hit.light = m_light;
                 return hit;
             }
         }

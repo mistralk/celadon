@@ -41,16 +41,15 @@ namespace celadon {
             return std::nullopt;
     }
 
-    bool Scene::test_occlusion(const Ray& ray, std::shared_ptr<Shape> me) const {
+    bool Scene::test_occlusion(const Ray& ray, std::shared_ptr<Shape> me, const FLOAT ray_to_light_dist) const {
         for (const auto& shape : m_shapes) {
             if (shape == me) continue;
             
-            auto hit = shape->intersect(ray);
-            if (hit)
+            const auto obstacle = shape->intersect(ray);
+            if (obstacle && ray_to_light_dist > obstacle->distance)
                 return true;
         }
         
         return false;
     }
-
 }

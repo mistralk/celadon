@@ -15,19 +15,19 @@ namespace celadon {
         
     }
 
-    Color3f PointLight::sample(const Point2f& u, std::shared_ptr<Scene> scene, const SurfaceHit& hit) {
-        auto wi_with_length = (hit.p + hit.n * K_EPSILON) - m_position;
-        const auto dist = wi_with_length.length();
-        const auto wi = wi_with_length.normalize();
+    std::pair<Vec3f, Color3f> PointLight::sample(const Point2f& u, std::shared_ptr<Scene> scene, const SurfaceHit& hit) {
+        auto wo_with_length = m_position - (hit.p + hit.n * K_EPSILON);
+        const auto dist = wo_with_length.length();
+        const auto wo = wo_with_length.normalize();
 
-        const Ray shadow_ray(hit.p + hit.n * K_EPSILON, -wi);
-        const auto occluded = scene->test_occlusion(shadow_ray);
+        const Ray shadow_ray(hit.p + hit.n * K_EPSILON, wo);
+        const auto occluded = scene->test_occlusion(shadow_ray, nullptr, dist);
         if (occluded) {
-            return Color3f(0, 0, 0);
+            return {wo, Color3f(0, 0, 0)};
         }
         else {
-            const auto cos_term = abs(wi.dot(hit.n));
-            return m_emittance / (dist * dist) * cos_term;
+            const auto cos_term = abs(wo.dot(hit.n));
+            return {wo, m_radiance * cos_term};
         }
     }
 }

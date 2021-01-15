@@ -13,11 +13,8 @@ namespace celadon {
          : m_reflectance(reflectance), is_specular(specular) { }
         virtual ~BSDF() = default;
 
+        virtual Color3f evaluate(const SurfaceHit& hit, const Vec3f& wo) = 0;
         virtual std::pair<Vec3f, Color3f> sample(std::shared_ptr<Sampler> sampler, const SurfaceHit& hit) = 0;
-
-        virtual Color3f reflectance(const SurfaceHit& hit) {
-            return m_reflectance;
-        }
 
         const bool is_specular;
 
